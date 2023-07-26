@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Directory Listing App</title>
+</head>
+<body>
+  <div>
+    <label for="path">Enter Path:</label>
+    <input type="text" id="path" value="./" />
+    <button id="btnlistdir">List Directory</button>
+  </div>
+  <div>
+    <pre id="output"></pre>
+  </div>
+
+  <script>
+    const ipcRenderer = require('electron').ipcRenderer;
+
+    document.getElementById('btnlistdir').addEventListener('click', () => {
+      const path = document.getElementById('path').value;
+      if (!path) {
+        alert('Please enter a path');
+        return;
+      }
+      ipcRenderer.send('list-directory', path);
+    })
+
+    ipcRenderer.on('directory-listing-success', (event, output) => {
+      document.getElementById('output').textContent = output;
+    });
+
+    ipcRenderer.on('directory-listing-error', (event, error) => {
+      document.getElementById('output').textContent = `Error: ${error}`;
+    });
+  </script>
+</body>
+</html>
+
